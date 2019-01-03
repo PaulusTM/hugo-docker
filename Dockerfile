@@ -2,9 +2,10 @@ FROM debian:wheezy
 LABEL maintainer="d.paulus@gmail.com"
 
 # Install pygments (for syntax highlighting) 
-RUN apt-get -qq update \
-	&& DEBIAN_FRONTEND=noninteractive apt-get -qq install -y --no-install-recommends python-pygments git ca-certificates asciidoc \
-	&& rm -rf /var/lib/apt/lists/*
+RUN apt-get -qq update && \ 
+	DEBIAN_FRONTEND=noninteractive apt-get -qq install -y --no-install-recommends python-pygments git ca-certificates asciidoc && \
+	apt-get clean autoclean && \
+	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Download and install hugo
 ENV HUGO_VERSION 0.38
