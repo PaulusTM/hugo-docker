@@ -1,0 +1,35 @@
+image: docker:stable
+services:
+- docker:dind
+
+stages:
+- build
+- release
+
+variables:
+  HUGO_VERSION: "0.53"
+  DOCKER_DRIVER: overlay2
+  VERSION_IMAGE: $CI_REGISTRY_IMAGE:$HUGO_VERSION
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+
+build:
+  stage: build
+  tags:
+    - docker-in-docker
+  script:
+    - docker build --pull --build-arg HUGO_VERSION=$HUGO_VERSION -t $VERSION_IMAGE .
+    - docker push $VERSION_IMAGE
+
+release-image:
+  stage: release
+  tags:
+    - docker-in-docker
+  script:
+    - docker pull $VERSION_IMAGE
+    - docker tag $VERSION_IMAGE $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_RELEASE_IMAGE
+  only:
+    - master
