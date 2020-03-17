@@ -26,12 +26,5 @@ jobs:
           -t $DOCKER_USERNAME/$CONTAINER_IMAGE_NAME:$HUGO_VERSION-$GITHUB_RUN_ID
           -t $DOCKER_USERNAME/$CONTAINER_IMAGE_NAME:latest .
 
-      - name: Run Snyk to check Docker image for vulnerabilities
-        uses: snyk/actions/docker@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: "snyk test --docker $DOCKER_USERNAME/$CONTAINER_IMAGE_NAME:$HUGO_VERSION-$GITHUB_RUN_ID --severity-threshold=high"
-
       - name: Push Docker Container to Registry
         run: docker push $DOCKER_USERNAME/$CONTAINER_IMAGE_NAME
