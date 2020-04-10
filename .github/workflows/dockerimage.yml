@@ -22,9 +22,17 @@ jobs:
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_ACCESS_TOKEN $DOCKER_REGISTRY
 
       - name: Building Docker Image
-        run: docker build --build-arg HUGO_VERSION=$HUGO_VERSION --no-cache
+        run: |
+          # Change all uppercase to lowercase
+          GITHUB_REPOSITORY=$(echo $GITHUB_REPOSITORY | tr '[A-Z]' '[a-z]')  
+
+          docker build --build-arg HUGO_VERSION=$HUGO_VERSION --no-cache
           -t $DOCKER_REGISTRY/$GITHUB_REPOSITORY/hugo-docker:$HUGO_VERSION-$GITHUB_RUN_ID
           -t $DOCKER_REGISTRY/$GITHUB_REPOSITORY/hugo-docker:latest .
 
       - name: Push Docker Container to Registry
-        run: docker push $DOCKER_REGISTRY/$GITHUB_REPOSITORY/hugo-docker
+        run: |
+          # Change all uppercase to lowercase
+          GITHUB_REPOSITORY=$(echo $GITHUB_REPOSITORY | tr '[A-Z]' '[a-z]')
+
+          docker push $DOCKER_REGISTRY/$GITHUB_REPOSITORY/hugo-docker
